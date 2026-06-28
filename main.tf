@@ -1,4 +1,5 @@
 # ── TCP Health Check ──────────────────────────────────────────────────────────
+# Health check uses the first port in the list (primary control port).
 
 resource "google_compute_health_check" "tcp" {
   project             = var.project_id
@@ -9,7 +10,7 @@ resource "google_compute_health_check" "tcp" {
   unhealthy_threshold = 3
 
   tcp_health_check {
-    port = var.port
+    port = var.ports[0]
   }
 }
 
@@ -30,6 +31,7 @@ resource "google_compute_region_backend_service" "tcp" {
 }
 
 # ── Internal TCP Forwarding Rule ──────────────────────────────────────────────
+# Forwards all ports in var.ports to the backend service on the same port.
 
 resource "google_compute_forwarding_rule" "tcp" {
   project               = var.project_id
@@ -38,7 +40,7 @@ resource "google_compute_forwarding_rule" "tcp" {
   load_balancing_scheme = "INTERNAL"
   backend_service       = google_compute_region_backend_service.tcp.id
   protocol              = "TCP"
-  ports                 = [tostring(var.port)]
+  ports                 = [for p in var.ports : tostring(p)]
   network               = var.network
   subnetwork            = var.subnetwork
   ip_address            = var.lb_ip_address != "" ? var.lb_ip_address : null

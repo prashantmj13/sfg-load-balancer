@@ -35,9 +35,9 @@ variable "instance_group_url" {
   description = "Self-link of the MIG instance group. Use module.autoscaling.instance_group_url."
 }
 
-variable "port" {
-  type        = number
-  description = "TCP port the backend instances listen on. The load balancer forwards traffic to this port."
+variable "ports" {
+  type        = list(number)
+  description = "One or more TCP ports to forward to backend instances. The first port is also used for the health check. GCP allows up to 5 ports per forwarding rule."
 }
 
 variable "labels" {
