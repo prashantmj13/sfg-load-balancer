@@ -16,7 +16,7 @@ variable "instance_group_url" {
   description = "Output from sfg-autoscaling module: instance_group_url."
 }
 
-variable "ssl_certificate" {
-  type        = string
-  description = "Self-link of the GCP SSL certificate to attach to the LB."
+variable "port" {
+  type        = number
+  description = "TCP port the backend instances listen on."
 }
